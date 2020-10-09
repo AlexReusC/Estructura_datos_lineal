@@ -12,61 +12,13 @@
 #include <fstream>
 #include <string>
 #include "Registro.h"
+#include "Node.h"
+#include "insertaNodo.h"
+#include "imprimeListaHead.h"
+#include "imprimeListaTile.h"
 
 using namespace std;
 
-struct Node{
-  struct Node *prev;
-  Registro data;
-  struct Node *next;
-};
-
-void insertaNodo(struct Node * &h, struct Node * &t, Registro dataNode){
-
-  struct Node *tmp = new Node;
-
-  tmp -> data = dataNode;
-  tmp -> next = NULL;
-
-  if(h == NULL){
-
-    tmp -> prev = NULL;
-    h = tmp;
-    t = tmp;
-
-  }
-  else{
-
-    tmp -> prev = t;
-    t -> next = tmp;
-
-    t = tmp;
-
-  }
-
-}
-
-void imprimeListaHead(struct Node *h){
-
-  while(h != NULL){
-
-    cout << h -> data.print(0) << endl;
-    h = h -> next;
-
-  }
-
-}
-
-void imprimeListaTile(struct Node *t){
-
-  while(t != NULL){
-
-    cout << t -> data.print(0) << endl;
-    t = t -> prev;
-
-  }
-
-}
 
 int main(){
 

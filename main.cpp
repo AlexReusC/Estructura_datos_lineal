@@ -19,11 +19,140 @@
 
 using namespace std;
 
+void busquedaIP(struct Node *h, struct Node * &p, string ip){
+
+  struct Node *tmp = h;
+
+  while(tmp != NULL){
+
+    if(tmp -> data.getIP() == ip){
+      p = tmp;
+      break;
+    }
+
+    tmp = tmp -> next;
+
+  }
+
+}
+
+bool compareStrings(string s1, string s2){
+
+  char *ptc_1 = (char*)&s1[0];
+  char *ptc_2 = (char*)&s2[0];
+  bool flag = true;
+
+  while(*ptc_1 && *ptc_2){
+
+    if(*ptc_1 > *ptc_2){
+      flag = false;
+      break;
+    }
+    else if(*ptc_1 < *ptc_2){
+      break;
+    }
+
+    ptc_1++;
+    ptc_2++;
+
+  }
+
+  return flag;
+
+}
+
+bool compare(Registro &r1, Registro &r2){
+
+  // return (r1.getCifraUnoIP() < r2.getCifraUnoIP()) ? true : (r1.getCifraUnoIP() == r2.getCifraUnoIP()) ?
+  // (r1.getCifraDosIP() < r2.getCifraDosIP()) ? true : (r1.getCifraDosIP() == r2.getCifraDosIP()) ?
+  // (r1.getCifraTresIP() < r2.getCifraTresIP()) ? true : (r1.getCifraTresIP() == r2.getCifraTresIP()) ?
+  // (r1.getCifraCuatroIP() < r2.getCifraCuatroIP()) ? true : false : false : false : false;
+
+  if(r1.getCifraUnoIP() < r2.getCifraUnoIP()){
+    return true;
+  }
+  else if(r1.getCifraUnoIP() == r2.getCifraUnoIP()){
+
+    if(r1.getCifraDosIP() < r2.getCifraDosIP()){
+      return true;
+    }
+    else if(r1.getCifraDosIP() == r2.getCifraDosIP()){
+
+      if (r1.getCifraTresIP() < r2.getCifraTresIP()){
+        return true;
+      }
+      else if(r1.getCifraTresIP() == r2.getCifraTresIP()){
+
+        if(r1.getCifraCuatroIP() < r2.getCifraCuatroIP()){
+          return true;
+        }
+        else if(r1.getCifraCuatroIP() == r2.getCifraCuatroIP()){ // Si las IPs son iguales
+
+          if (r1.getMesNum() < r2.getMesNum()){
+            return true;
+          }
+          else if(r1.getMesNum() == r2.getMesNum()){
+
+            if(r1.getDiaNum() < r2.getDiaNum()){
+              return true;
+            }
+            else if(r1.getDiaNum() == r2.getDiaNum()){
+
+              if(r1.getSumaHorario() < r2.getSumaHorario()){
+                return true;
+              }
+              else if(r1.getSumaHorario() == r2.getSumaHorario()){
+
+                if(compareStrings(r1.getState(), r2.getState())){
+                  return true;
+                }
+                else{
+                  return false;
+                }
+
+              }
+              else{
+                return false;
+              }
+
+            }
+            else{
+              return false;
+            }
+
+          }
+          else{
+            return false;
+          }
+
+        }
+        else{
+          return false;
+        }
+
+      }
+      else{
+        return false;
+      }
+
+    }
+    else {
+      return false;
+    }
+
+  }
+  else {
+    return false;
+  }
+
+}
 
 int main(){
 
   struct Node *h = NULL;
   struct Node *t = NULL;
+  struct Node *tmpI = NULL; // Apuntador a nodo inicial para la búsqueda de la IP
+  struct Node *tmpF = NULL; // Apuntador a nodo final para la búsqueda de la IP
 
   int busqDiaInicio, busqMesInicio, busqDiaFinal, busqMesFinal;
   string line, mes, dia, horario, ip, state, linea;
@@ -43,7 +172,7 @@ int main(){
 
       if(h != NULL){
 
-        if(entrada.getCifraUnoIP() < (h -> data.getCifraUnoIP())){
+        if(compare(entrada, h -> data)){
 
           struct Node *tmp = new Node;
 
@@ -54,8 +183,8 @@ int main(){
           h = tmp;
 
         }
-        else
-        if(entrada.getCifraUnoIP() > (t -> data.getCifraUnoIP())){
+
+        else if(compare(t -> data, entrada)){
 
           struct Node *tmp = new Node;
 
@@ -66,18 +195,18 @@ int main(){
           t = tmp;
 
         }
-        else
-        if(entrada.getCifraUnoIP() > (h -> data.getCifraUnoIP())){
+
+        else if(compare(h -> data, entrada)){
 
           struct Node *tmp = h;
 
-          while(tmp != NULL && entrada.getCifraUnoIP() > (tmp -> data.getCifraUnoIP())){
+          while(tmp != NULL && compare(tmp -> data, entrada)){
             tmp = (tmp -> next);
           }
 
-          if(tmp == NULL){
+          if(tmp == NULL){ // Si llegó al último nodo de la lista
 
-            if(entrada.getCifraUnoIP() > (tmp -> data.getCifraUnoIP())){
+            if(compare(tmp -> data, entrada)){
 
               struct Node *tmp_2 = new Node;
 
@@ -88,7 +217,7 @@ int main(){
               t = tmp_2;
 
             }
-            else{ // Cuando el nodo (entrada) es mayor al h (primer nodo)
+            else{ // Cuando el nodo (entrada) es menor al último nodo
 
               struct Node *tmp_2 = new Node;
 
@@ -101,7 +230,7 @@ int main(){
             }
 
           }
-          else{ // tmp es mayor que el nuevo nodo (entrada)
+          else{ // La entrada (nuevo nodo) es menor al tmp (un dato que ya estaba en la lista)
 
             struct Node *tmp_2 = new Node;
 
@@ -114,18 +243,18 @@ int main(){
           }
 
         }
-        else
-        if(entrada.getCifraUnoIP() < (t -> data.getCifraUnoIP())){
+
+        else if(compare(entrada, t -> data)){
 
           struct Node *tmp = t;
 
-          while(tmp != NULL && entrada.getCifraUnoIP() < (tmp -> data.getCifraUnoIP())){
+          while(tmp != NULL && compare(entrada, tmp -> data)){
             tmp = (tmp -> prev);
           }
 
           if(tmp == NULL){
 
-            if(entrada.getCifraUnoIP() < (tmp -> data.getCifraUnoIP())){
+            if (compare(entrada, tmp -> data)) {
 
               struct Node *tmp_2 = new Node;
 
@@ -172,17 +301,48 @@ int main(){
 
   }
 
+
+  Registro masIP;
+  string strIPinicio, strIPfinal;
+
+  cin >> strIPinicio;
+  cin >> strIPfinal;
+
+  busquedaIP(h, tmpI, strIPinicio);
+  busquedaIP(h, tmpF, strIPfinal);
+
+  if(compare(tmpF -> data, tmpI -> data)){
+
+    while(tmpI != NULL && tmpF != NULL){
+
+      cout << tmpI -> data.print(0) << endl;
+
+      if(tmpI == tmpF){
+        break;
+      }
+
+      tmpI = tmpI -> prev;
+
+    }
+
+  }
+  else{
+
+    while(tmpF != NULL && tmpI != NULL){
+
+      cout << tmpF -> data.print(0) << endl;
+
+      if(tmpF == tmpI){
+        break;
+      }
+
+      tmpF = tmpF -> prev;
+
+    }
+
+  }
+
   imprimeListaHead(h);
-
-  // ofstream sortedData;
-  // sortedData.open("sortedData.txt");
-
-  // for(int i = 0; i < entradas.size(); i++){
-    // 	sortedData << entradas[i].print(0) << endl;
-    // }
-    //
-    // sortedData.close();
-
 
   return 0;
 

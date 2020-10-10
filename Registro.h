@@ -137,4 +137,22 @@ class Registro{
 			return cifraCuatroIP;
 		}
 
+		string getState(){
+			return state;
+		}
+
+		string getIP(){
+
+			string shortIP;
+			int i = 0;
+			while (ip[i] != ':') {
+				shortIP += ip[i];
+				i++;
+			}
+
+			return shortIP;
+		}
+		string getAllIP(){
+			return ip;
+		}
 };
